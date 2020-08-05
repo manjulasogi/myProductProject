@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Trinipi Text Client</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+	 $(document).ajaxStart(function(){
+	        $("#wait").css("display", "block");
+	    });
+	    $(document).ajaxComplete(function(){
+	        $("#wait").css("display", "none");
+	    });
+		
+		$("#authBtn").click(function(){
+	    	var utext = $('#authTxt').val();
+			$.ajax({
+				url: "ec2-13-234-3-31.ap-south-1.compute.amazonaws.com:9997/authenticate",
+				type: "POST",
+				contentType: "application/json",
+				dataType: 'json',
+				data: utext,
+				success: function (data) {
+				console.log(data);
+					var textdata = JSON.stringify(data);
+					alert("data "+textdata);
+					//document.getElementById("priceTxt").innerHTML  = textdata;
+				},
+				error: function (response) {
+					$('#result').html('Error: ' + response.responseText + " " +  response.status);
+				}
+			});
+		});
+	    $("#submitBtn").click(function(){
+	    	var url = $('#productid').val();
+			var tkey = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiZXhwIjoxNTk3ODg5MjA4LCJpYXQiOjE1OTY1MjcwNDN9.Zt5pLOGsGQ7vMl8tgwS_u582qYWc88FNPK7BehYH8hg";	
+			//url = url+"?key="+tkey;
+			console.log("url: " + url);
+			/*$.post(url,
+				{
+				  key :tkey
+				},
+				function (data) {
+				console.log(data);
+					var textdata = JSON.stringify(data);
+					console.log(textdata);
+					document.getElementById("priceTxt").innerHTML  = textdata;
+				});*/
+			
+			$.ajax({
+	        url: url,
+	   		type: "GET",
+			success: function (data) {
+			console.log(data);
+			    var textdata = JSON.stringify(data);
+				console.log("data "+textdata);
+				document.getElementById("priceTxt").innerHTML  = textdata;
+			},
+			error: function (response) {
+	    		$('#result').html('Error: ' + response.responseText + " " +  response.status);
+	    	}
+	    });	
+				
+       });
+	   $("#submitBtn1").click(function(){
+	    	var url = $('#productid1').val();
+			var dtext = $('#priceTxt1').val();
+			var obj = JSON.parse(dtext);
+			console.log("dtext " + dtext );
+			console.log(obj.id +" "+obj.name+" "+ obj.description);
+	    $.ajax({
+	        url: url,
+	   		type: "POST",
+			contentType: "application/json",
+			dataType: 'json',
+			data: dtext,
+			success: function (data) {
+			console.log(data);
+			    var textdata = JSON.stringify(data);
+				console.log("data "+textdata);
+				//document.getElementById("priceTxt").innerHTML  = textdata;
+			},
+			error: function (response) {
+	    		$('#result').html('Error: ' + response.responseText + " " +  response.status);
+	    	}
+	    });
+       });
+	   
+	   $("#submitBtn2").click(function(){
+	    	var url = $('#productid2').val();
+			var dtext = $('#priceTxt2').val();
+			console.log("dtext " + dtext );
+			//var obj = JSON.parse(dtext);
+			//console.log("dtext " + dtext );
+			//console.log(obj.id +" "+obj.name+" "+ obj.description);
+	    $.ajax({
+	        url: url,
+	   		type: "PUT",
+			contentType: "application/json",
+			dataType: 'json',
+			data: dtext,
+			success: function (data) {
+			console.log(data);
+			    var textdata = JSON.stringify(data);
+				console.log("data "+textdata);
+				//document.getElementById("priceTxt").innerHTML  = textdata;
+			},
+			error: function (response) {
+			var obj = JSON.parse(response.responseText);
+	    		$('#result').html('Error: ' + obj.message + " " +  response.status);
+	    	}
+	    });
+       });
+ });
+</script>
+</head>
+<body>
+<table>
+<tr>
+<td>Enter fullpath of price data :/products/{id} </td>
+<td><textarea rows="2" cols="75" name="productid" id="productid"></textarea></td>
+</tr>
+<tr>
+<td>Price Data</td>
+<td ><textarea rows="5" cols="75" name="priceTxt" id="priceTxt"></textarea></td>
+</tr>
+<tr>
+<td colspan="2">
+<input type="button" name="submitBtn" id="submitBtn" value="Get Price"/>
+</td>
+</tr>
+<tr>
+<td>Enter fullpath of price data :/products/{id}/price </td>
+<td><textarea rows="2" cols="75" name="productid1" id="productid1"></textarea></td>
+</tr>
+<tr>
+<td>New Price Data</td>
+<td ><textarea rows="5" cols="75" name="priceTxt1" id="priceTxt1"></textarea></td>
+</tr>
+<tr>
+<td colspan="2">
+<input type="button" name="submitBtn1" id="submitBtn1" value="Post Price"/>
+</td>
+</tr>
+<td>Enter fullpath of price data :/products/{id}/price </td>
+<td><textarea rows="2" cols="75" name="productid2" id="productid2"></textarea></td>
+</tr>
+<tr>
+<td>Update Price Data</td>
+<td ><textarea rows="5" cols="75" name="priceTxt2" id="priceTxt2"></textarea></td>
+</tr>
+<tr>
+<td colspan="2">
+<input type="button" name="submitBtn2" id="submitBtn2" value="Put Price"/>
+</td>
+</tr>
+</table>
+<div id="result"></div>
+<div id="wait" style="display:none;width:69px;height:89px;border:1px solid black;position:absolute;top:50%;left:50%;padding:2px;"><img src='demo_wait.gif' width="64" height="64" /><br>Loading..</div>
+</form>
+</body>
+</html>
